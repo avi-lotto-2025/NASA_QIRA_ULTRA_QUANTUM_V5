@@ -3,3 +3,4 @@ gunicorn
 colorama
 requests
 schedule
+numpy
