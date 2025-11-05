@@ -202,3 +202,31 @@ if __name__ == "__main__":
     start_scheduler_thread()
     # שרת Flask להצגת סטטוס (Render מצפה לשירות מאזין)
     app.run(host="0.0.0.0", port=10000)
+# ==========================================================
+# שליחת עדכון תחזיות במייל – מנגנון אוטומטי
+# ==========================================================
+import smtplib
+from email.mime.text import MIMEText
+from datetime import datetime
+
+def send_update_email():
+    now = datetime.now().strftime("%d/%m/%Y %H:%M")
+    subject = f"תחזית לוטו אוטומטית - עדכון {now}"
+    body = f"🚀 התחזית החדשה הופעלה בהצלחה במערכת NASA_QIRA_ULTRA_QUANTUM_V6_AUTO\n\nזמן הפעלה: {now}\n\nנשלח אוטומטית מהשרת ברנדר."
+    msg = MIMEText(body)
+    msg["Subject"] = subject
+    msg["From"] = "avi5588@gmail.com"
+    msg["To"] = "avi5588@gmail.com"
+
+    try:
+        server = smtplib.SMTP("smtp.gmail.com", 587)
+        server.starttls()
+        server.login("avi5588@gmail.com", os.getenv("EMAIL_PASS"))
+        server.send_message(msg)
+        server.quit()
+        print("✅ נשלח מייל עדכון בהצלחה")
+    except Exception as e:
+        print("⚠️ שגיאה בשליחת מייל:", e)
+
+# קריאה אוטומטית בעת סיום הריצה
+send_update_email()
