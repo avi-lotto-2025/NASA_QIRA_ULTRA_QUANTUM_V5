@@ -218,15 +218,42 @@ def send_update_email():
     msg["From"] = "avi5588@gmail.com"
     msg["To"] = "avi5588@gmail.com"
 
-    try:
-        server = smtplib.SMTP("smtp.gmail.com", 587)
-        server.starttls()
-        server.login("avi5588@gmail.com", os.getenv("EMAIL_PASS"))
-        server.send_message(msg)
-        server.quit()
-        print("✅ נשלח מייל עדכון בהצלחה")
-    except Exception as e:
-        print("⚠️ שגיאה בשליחת מייל:", e)
+   # ===============================================================
+# שליחת עדכון תחזית במייל – גרסה משופרת עם SendGrid
+# ===============================================================
+import os
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
+from datetime import datetime
 
-# קריאה אוטומטית בעת סיום הריצה
+def send_update_email():
+    try:
+        now = datetime.now().strftime("%d/%m/%Y %H:%M")
+        subject = f"🚀 תחזית חדשה - מערכת נאס\"א קירה | {now}"
+        body = f"""
+        שלום אבי 👋
+        
+        מערכת NASA_QIRA_ULTRA_QUANTUM_V6 שלחה תחזית חדשה בהצלחה.
+        זמן הפעלה: {now}
+        
+        ✨ התחזית נשלחה מהמערכת בענן (Render) באמצעות SendGrid.
+        """
+
+        message = Mail(
+            from_email='avi5588@gmail.com',
+            to_emails='avi5588@gmail.com',
+            subject=subject,
+            plain_text_content=body
+        )
+
+        sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
+        sg.send(message)
+        print("✅ מייל נשלח בהצלחה דרך SendGrid!")
+
+    except Exception as e:
+        print("⚠️ שגיאה בשליחת מייל דרך SendGrid:", e)
+
+
+# הפעלת שליחה אוטומטית
 send_update_email()
+
