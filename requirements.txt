@@ -4,3 +4,4 @@ colorama
 requests
 schedule
 numpy
+sendgrid
