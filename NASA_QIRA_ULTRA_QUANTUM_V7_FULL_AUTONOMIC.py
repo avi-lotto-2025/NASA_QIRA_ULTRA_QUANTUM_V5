@@ -157,3 +157,12 @@ def main_engine():
 if __name__ == "__main__":
     main_engine()
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+# ================================================================
+# 🟣 שלב 1 – לוג סגול בזמן אמת לכל תחזית
+# ================================================================
+
+def log_purple_event(event_text):
+    """מדפיסה לוג סגול בזמן אמת לכל שליחה"""
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    print(f"🟣 [NASA_QIRA_AUTONOMIC_V7] {event_text} | זמן: {timestamp}")
+    return f"🟣 [NASA_QIRA_AUTONOMIC_V7] {event_text} | זמן: {timestamp}"
