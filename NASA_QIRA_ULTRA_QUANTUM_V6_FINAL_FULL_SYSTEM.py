@@ -65,3 +65,6 @@ def initialize_kira_layer():
 
 # קריאה ראשונית לאתחול
 initialize_kira_layer()
+if __name__ == "__main__":
+    print("🚀 מערכת נאס״א קירה אולטרא הופעלה בהצלחה - שליחה אוטומטית החלה")
+    initialize_kira_layer()
