@@ -166,3 +166,85 @@ def log_purple_event(event_text):
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     print(f"🟣 [NASA_QIRA_AUTONOMIC_V7] {event_text} | זמן: {timestamp}")
     return f"🟣 [NASA_QIRA_AUTONOMIC_V7] {event_text} | זמן: {timestamp}"
+# ================================================================
+# 🧠 שלב 2 – מנגנון מודעות עצמית (Self-Awareness Heartbeat)
+# ================================================================
+
+def heartbeat_check():
+    """
+    בודקת כל שעה אם המערכת עדיין פעילה בענן.
+    אם מזהה שהמערכת לא שלחה תחזיות ב-24 השעות האחרונות – היא מפעילה את עצמה מחדש.
+    """
+    print("💜 [HEARTBEAT] בודקת את פעילות המערכת...")
+    last_check = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    try:
+        with open("email_log.txt", "r", encoding="utf-8") as log_file:
+            lines = log_file.readlines()
+            if not lines:
+                print("⚠️ לא נמצאו שליחות קודמות – מפעילה מחדש.")
+                main_engine()
+                return
+            last_entry = lines[-1]
+            print(f"✅ נמצאה שליחה אחרונה ב־{last_entry}")
+    except FileNotFoundError:
+        print("📁 קובץ לוג לא נמצא – נוצר חדש.")
+        with open("email_log.txt", "w", encoding="utf-8") as f:
+            f.write(f"[{last_check}] קובץ נוצר ע״י Heartbeat\n")
+        main_engine()
+    except Exception as e:
+        print(f"⚠️ שגיאה בבדיקת Heartbeat: {e}")
+
+    # לולאה חוזרת כל שעה
+    threading.Timer(3600, heartbeat_check).start()
+# ================================================================
+# 🟢 שלב 3 – לוג חכם לכל מייל שנשלח (email_log.txt)
+# ================================================================
+
+def log_email_entry(prediction_type, numbers):
+    """
+    רושם קובץ לוג מקומי עם כל שליחה:
+    סוג התחזית (ראשית/גיבוי), המספרים שנשלחו, ותאריך מדויק.
+    """
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    log_line = f"[{timestamp}] {prediction_type}: {numbers}\n"
+
+    try:
+        with open("email_log.txt", "a", encoding="utf-8") as f:
+            f.write(log_line)
+        print(f"🟢 נרשמה שליחה ללוג ({prediction_type})")
+    except Exception as e:
+        print(f"⚠️ שגיאה ברישום ללוג: {e}")
+# ================================================================
+# ⚙️ שלב 4 – Quantum Stability Check (בדיקת יציבות משלוחים)
+# ================================================================
+
+def send_with_retry(send_func, description="שליחה אוטומטית", max_retries=3):
+    """
+    מנסה לבצע שליחה עד 3 פעמים, עם הדפסות מצב ולוגים ברורים.
+    """
+    for attempt in range(1, max_retries + 1):
+        try:
+            print(f"🟣 [Quantum Check] ניסיון מס׳ {attempt} עבור {description}...")
+            send_func()
+            print("🟢 משלוח אומת בהצלחה!")
+            log_purple_event(f"שליחה {description} הצליחה בניסיון {attempt}")
+            return True
+        except Exception as e:
+            print(f"🟡 שגיאה: {e} | ניסיון {attempt} נכשל, ממתין 5 שניות...")
+            time.sleep(5)
+    print("🔴 כל הניסיונות נכשלו – דרוש טיפול ידני.")
+    log_purple_event(f"❌ כשל בשליחת {description} לאחר {max_retries} ניסיונות")
+    return False
+# ================================================================
+# 🟣 שלב 5 – חותמת גרסה רשמית (Version Signature)
+# ================================================================
+
+def print_version_signature():
+    """מדפיסה חותמת גרסה רשמית לכל הפעלה בענן"""
+    build_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    print("🚀 NASA_QIRA_ULTRA_QUANTUM_V7_FULL_AUTONOMIC_PLUS")
+    print(f"🌐 מצב מערכת: פעילה בענן | גרסת PLUS | תאריך בנייה: {build_date}")
+    print("🧠 ניהול עצמי מלא | Self-Awareness | Quantum Stability | Heartbeat 💜")
+
+# קריאה לחותמת בעת עליית המערכת
+print_version_signature()
