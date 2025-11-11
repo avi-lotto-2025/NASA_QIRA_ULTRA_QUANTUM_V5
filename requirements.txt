@@ -13,3 +13,4 @@ email-validator
 itsdangerous
 Werkzeug
 Jinja2
+beautifulsoup4
