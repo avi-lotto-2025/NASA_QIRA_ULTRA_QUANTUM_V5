@@ -1,7 +1,5 @@
-flask
-gunicorn
-colorama
-requests
-schedule
-numpy
+Flask
 sendgrid
+schedule
+gunicorn
+pandas
