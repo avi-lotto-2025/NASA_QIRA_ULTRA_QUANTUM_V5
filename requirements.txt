@@ -14,3 +14,35 @@ itsdangerous
 Werkzeug
 Jinja2
 beautifulsoup4
+import os
+import importlib
+
+# --- שלב זיהוי אוטומטי של קובץ ראשי ---
+possible_files = [
+    "NASA_QIRA_ULTRA_QUANTUM_V7.1_FULL_AUTONOMIC_HEARTBEAT",
+    "NASA_QIRA_ULTRA_QUANTUM_V7_FULL_AUTONOMIC_HEARTBEAT",
+    "NASA_QIRA_ULTRA_QUANTUM_V7",
+    "NASA_QIRA_ULTRA_QUANTUM_V6_FINAL_FULL_SYSTEM_AUTO"
+]
+
+app = None
+for name in possible_files:
+    try:
+        module = importlib.import_module(name)
+        app = getattr(module, "app", None)
+        if app:
+            print(f"✅ Loaded {name} successfully")
+            break
+    except ModuleNotFoundError:
+        continue
+
+if not app:
+    raise ModuleNotFoundError("❌ No valid NASA_QIRA module found")
+
+# --- הפעלת השרת ---
+if __name__ == "__main__":
+    from flask import Flask
+    from waitress import serve
+    print("🚀 Starting NASA QIRA Ultra Quantum Autonomic Engine...")
+    serve(app, host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
+
