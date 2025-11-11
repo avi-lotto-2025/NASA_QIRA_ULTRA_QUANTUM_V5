@@ -3,3 +3,13 @@ sendgrid
 schedule
 gunicorn
 pandas
+requests
+colorama
+numpy
+matplotlib
+python-dotenv
+pytz
+email-validator
+itsdangerous
+Werkzeug
+Jinja2
