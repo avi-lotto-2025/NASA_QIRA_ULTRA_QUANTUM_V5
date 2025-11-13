@@ -1,16 +1,26 @@
 import time
-from main_quantum_launcher import run_full_system
+from main_quantum_launcher import auto_cycle
 
 def autostart():
+    """
+    הפעלה אוטונומית מלאה של מערכת QIRA ULTRA.
+    אין שום שימוש ב-input, אין שאלה למשתמש.
+    המערכת רצה לנצח, או עד קריסה – ואז מבצעת התאוששות.
+    """
     while True:
         try:
-            print("🚀 הפעלה אוטומטית – מערכת QIRA ULTRA רצה בענן...")
-            run_full_system()     # מפעיל את כל המוחות, החישובים והמייל
-            print("✔️ תחזית נשלחה בהצלחה. המתנה למחזור הבא...")
-            time.sleep(60 * 60)   # המתנה שעה (Heartbeat טבעי)
+            print("\n🚀 הפעלה אוטומטית – מערכת QIRA ULTRA פועלת בענן ללא הפסקה...\n")
+            
+            # הפעלת המנוע הראשי (הפעלה של כל המודולים והמחזורים)
+            auto_cycle()
+
+            # אם auto_cycle תחזור (זה נדיר), נחכה קצת ונחזור למחזור הבא
+            print("✔️ מחזור הסתיים. המערכת תחזור בעוד 10 שניות...\n")
+            time.sleep(10)
+
         except Exception as e:
-            print("❌ שגיאה:", e)
-            print("⏳ ניסיון מחדש בעוד 30 שניות...")
+            print("❌ שגיאה במערכת:", e)
+            print("⏳ ניסיון התאוששות בעוד 30 שניות...\n")
             time.sleep(30)
 
 if __name__ == "__main__":
