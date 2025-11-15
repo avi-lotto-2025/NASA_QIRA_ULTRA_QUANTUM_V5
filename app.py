@@ -1,59 +1,68 @@
-import importlib
-import os
 from flask import Flask, jsonify
+import os
+import random
 
 app = Flask(__name__)
 
-# --- טעינת גרסה אחרונה ---
-def load_latest_version():
-    files = [
-        f for f in os.listdir('.')
-        if f.startswith('NASA_QIRA_ULTRA_QUANTUM_') and f.endswith('.py')
-    ]
-
-    if not files:
-        raise FileNotFoundError("❌ לא נמצא שום קובץ שמתחיל בשם של NASA_QIRA_ULTRA_QUANTUM")
-
-    latest = sorted(files)[-1].replace('.py', '')
-    module = importlib.import_module(latest)
-    print(f"🟢 נטען בהצלחה: {latest}")
-    return module
-
-engine = load_latest_version()
-
-# --- נקודת הרצה יחידה /run ---
-@app.route("/run")
-def run_once():
-    if not hasattr(engine, "run_once"):
-        return jsonify({
-            "status": "error",
-            "message": f"הפונקציה {engine.__name__} לא כוללת run_once"
-        })
-
+# ---------------------------------------------------
+# שכבת תחזית ראשית
+# ---------------------------------------------------
+def run_main():
     try:
-        # תחזית ראשית
-        main_prediction = engine.run_main()
+        numbers = random.sample(range(1, 38), 6)
+        return sorted(numbers)
+    except Exception as e:
+        return {"error": True, "message": str(e)}
 
-        # תחזית גיבוי אחת בלבד
-        backup_prediction = engine.run_backup()
+# ---------------------------------------------------
+# שכבת גיבוי
+# ---------------------------------------------------
+def run_backup():
+    try:
+        numbers = random.sample(range(1, 38), 6)
+        return sorted(numbers)
+    except Exception as e:
+        return {"error": True, "message": str(e)}
 
-        result = {
-            "main": main_prediction,
-            "backup": backup_prediction
+# ---------------------------------------------------
+# פונקציה חד-פעמית — זו שרנדר קורא ב־/run
+# ---------------------------------------------------
+def run_once():
+    try:
+        main_numbers = run_main()
+        backup_numbers = run_backup()
+
+        return {
+            "main": main_numbers,
+            "backup": backup_numbers
         }
 
+    except Exception as e:
+        return {
+            "error": True,
+            "message": str(e)
+        }
+
+# ---------------------------------------------------
+# ניתוב Flask — הבקשה ש־Render שולח
+# ---------------------------------------------------
+@app.route("/run", methods=["GET"])
+def run_endpoint():
+    try:
+        result = run_once()
         return jsonify({
-            "status": "ok",
+            "status": "success",
             "result": result
         })
-
     except Exception as e:
         return jsonify({
             "status": "error",
             "message": str(e)
         })
 
-# --- הפעלה ---
+# ---------------------------------------------------
+# הפעלת השרת ב־Render
+# ---------------------------------------------------
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
